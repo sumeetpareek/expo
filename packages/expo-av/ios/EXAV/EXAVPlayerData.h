@@ -39,7 +39,7 @@
                 resolver:(UMPromiseResolveBlock)resolve
                 rejecter:(UMPromiseRejectBlock)reject;
 
-typedef void (^SampleBufferCallback)(AVAudioPCMBuffer * _Nonnull buffer);
+typedef void (^SampleBufferCallback)(AVAudioPCMBuffer * _Nonnull buffer, double timestamp);
 
 - (void)addSampleBufferCallback:(SampleBufferCallback)callback;
 - (void)removeSampleBufferCallback;
