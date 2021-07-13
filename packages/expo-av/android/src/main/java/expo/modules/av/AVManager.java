@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.facebook.jni.HybridData;
 
@@ -38,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import expo.modules.av.player.MediaPlayerData;
 import expo.modules.av.player.PlayerData;
 import expo.modules.av.video.VideoView;
 import expo.modules.av.video.VideoViewWrapper;
@@ -144,16 +144,8 @@ public class AVManager implements LifecycleEventListener, AudioManager.OnAudioFo
   private native void installJSIBindings(long jsRuntimePointer, CallInvokerHolderImpl jsCallInvokerHolder);
 
   @DoNotStrip
-  private MediaPlayerData getMediaPlayerById(int id) {
-    if (!mSoundMap.containsKey(id)) {
-      return null;
-    }
-    PlayerData player = mSoundMap.get(id);
-    if (player instanceof MediaPlayerData) {
-      return (MediaPlayerData) player;
-    } else {
-      return null;
-    }
+  private PlayerData getMediaPlayerById(int id) {
+    return mSoundMap.get(id);
   }
 
   @Override
@@ -174,12 +166,12 @@ public class AVManager implements LifecycleEventListener, AudioManager.OnAudioFo
     if (mModuleRegistry != null) {
       final UIManager uiManager = mModuleRegistry.getModule(UIManager.class);
 
-      uiManager.runOnClientCodeQueueThread(() -> {
+      //uiManager.runOnClientCodeQueueThread(() -> {
         final JavaScriptContextProvider jsContextProvider = mModuleRegistry.getModule(JavaScriptContextProvider.class);
         CallInvokerHolderImpl callInvoker = (CallInvokerHolderImpl) ((ReactContext) mContext).getCatalystInstance().getJSCallInvokerHolder();
 
         installJSIBindings(jsContextProvider.getJavaScriptContextRef(), callInvoker);
-      });
+      //});
     }
   }
 

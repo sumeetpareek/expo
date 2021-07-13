@@ -1,13 +1,17 @@
 package expo.modules.av.player;
 
 import android.content.Context;
+import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Surface;
 
+import com.facebook.jni.HybridData;
+
 import org.unimodules.core.Promise;
 import org.unimodules.core.arguments.ReadableArguments;
+import org.unimodules.core.interfaces.DoNotStrip;
 
 import java.util.Map;
 
@@ -36,6 +40,8 @@ public abstract class PlayerData implements AudioEventHandler {
   static final String STATUS_IS_MUTED_KEY_PATH = "isMuted";
   static final String STATUS_IS_LOOPING_KEY_PATH = "isLooping";
   static final String STATUS_DID_JUST_FINISH_KEY_PATH = "didJustFinish";
+  @DoNotStrip
+  private HybridData mHybridData = null;
 
   public static Bundle getUnloadedStatus() {
     final Bundle map = new Bundle();
@@ -96,7 +102,25 @@ public abstract class PlayerData implements AudioEventHandler {
     mRequestHeaders = requestHeaders;
     mAVModule = avModule;
     mUri = uri;
+    mHybridData = initHybrid();
   }
+
+  @Override
+  protected void finalize() throws Throwable {
+    super.finalize();
+    mHybridData.resetNative();
+    mHybridData = null;
+  }
+
+
+  @SuppressWarnings("JavaJniMissingFunction")
+  private native HybridData initHybrid();
+  @SuppressWarnings({"JavaJniMissingFunction"})
+  protected native void sampleBufferCallback(byte[] sampleBuffer);
+
+  @SuppressWarnings("unused")
+  @DoNotStrip
+  abstract void setEnableSampleBufferCallback(boolean enable);
 
   public static PlayerData createUnloadedPlayerData(final AVManagerInterface avModule, final Context context, final ReadableArguments source, final Bundle status) {
     final String uriString = source.getString(STATUS_URI_KEY_PATH);
