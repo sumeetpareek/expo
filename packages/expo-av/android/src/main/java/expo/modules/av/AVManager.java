@@ -14,9 +14,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 
+import com.facebook.jni.HybridData;
+
 import org.unimodules.core.ModuleRegistry;
 import org.unimodules.core.Promise;
 import org.unimodules.core.arguments.ReadableArguments;
+import org.unimodules.core.interfaces.DoNotStrip;
 import org.unimodules.core.interfaces.InternalModule;
 import org.unimodules.core.interfaces.LifecycleEventListener;
 import org.unimodules.core.interfaces.services.EventEmitter;
@@ -58,6 +61,9 @@ public class AVManager implements LifecycleEventListener, AudioManager.OnAudioFo
   private static final String RECORDING_OPTION_MAX_FILE_SIZE_KEY = "maxFileSize";
 
   private boolean mShouldRouteThroughEarpiece = false;
+
+  @DoNotStrip
+  private HybridData mHybridData = null;
 
   private enum AudioInterruptionMode {
     DO_NOT_MIX,
@@ -112,7 +118,21 @@ public class AVManager implements LifecycleEventListener, AudioManager.OnAudioFo
     mContext.registerReceiver(mNoisyAudioStreamReceiver,
       new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
     mIsRegistered = true;
+    mHybridData = initHybrid();
+    installJSIBindings();
   }
+
+  @Override
+  protected void finalize() throws Throwable {
+    super.finalize();
+    mHybridData.resetNative();
+    mHybridData = null;
+  }
+
+  @SuppressWarnings("JavaJniMissingFunction")
+  private native HybridData initHybrid();
+  @SuppressWarnings("JavaJniMissingFunction")
+  private native void installJSIBindings();
 
   @Override
   public ModuleRegistry getModuleRegistry() {
