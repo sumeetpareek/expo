@@ -6,6 +6,7 @@ import org.unimodules.core.ModuleRegistry;
 import org.unimodules.core.Promise;
 import org.unimodules.core.arguments.ReadableArguments;
 import expo.modules.av.video.VideoView;
+import expo.modules.interfaces.permissions.PermissionsResponseListener;
 
 public interface AVManagerInterface {
   void registerVideoViewForAudioLifecycle(final VideoView videoView);
@@ -55,6 +56,9 @@ public interface AVManagerInterface {
   void getAudioRecordingStatus(final Promise promise);
 
   void unloadAudioRecorder(final Promise promise);
+
+  boolean hasAudioPermission();
+  void requestAudioPermission(PermissionsResponseListener permissionsResponseListener);
 
   ModuleRegistry getModuleRegistry();
 }
