@@ -1424,6 +1424,7 @@ export default function App() {
 
 - You cannot define a custom `redirectUri`, Okta will provide you with one.
 - You can use the Expo proxy to test this without a native rebuild, just be sure to configure the project as a website.
+- TODO you need to add `scheme` setting in `app.json` for it to work in Expo Go client after publishing.
 
 <Tabs tabs={["Auth Code", "Implicit Flow"]}>
 <Tab>
